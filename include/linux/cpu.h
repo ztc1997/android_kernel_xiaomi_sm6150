@@ -180,9 +180,9 @@ void play_idle(unsigned long duration_ms);
 #ifdef CONFIG_HOTPLUG_CPU
 bool cpu_wait_death(unsigned int cpu, int seconds);
 bool cpu_report_death(void);
-void cpuhp_report_idle_dead(void);
+void cpuhp_report_idle_dead(int);
 #else
-static inline void cpuhp_report_idle_dead(void) { }
+static inline void cpuhp_report_idle_dead(int) { }
 #endif /* #ifdef CONFIG_HOTPLUG_CPU */
 
 #define IDLE_START 1
