@@ -705,17 +705,16 @@ static inline void cfqg_stats_update_io_merged(struct cfq_group *cfqg,
 static inline void cfqg_stats_update_completion(struct cfq_group *cfqg,
 						u64 start_time_ns,
 						u64 io_start_time_ns,
-						unsigned int op)
+			                        unsigned int op)
 {
 	struct cfqg_stats *stats = &cfqg->stats;
 	u64 now = ktime_get_ns();
 
 	if (now > io_start_time_ns)
-		blkg_rwstat_add(&stats->service_time, op,
-				now - io_start_time_ns);
+		blkg_rwstat_add(&stats->service_time, op, now - io_start_time_ns);
 	if (io_start_time_ns > start_time_ns)
 		blkg_rwstat_add(&stats->wait_time, op,
-						io_start_time_ns - start_time_ns);
+				io_start_time_ns - start_time_ns);
 }
 
 /* @stats = 0 */
@@ -803,7 +802,7 @@ static inline void cfqg_stats_update_io_merged(struct cfq_group *cfqg,
 static inline void cfqg_stats_update_completion(struct cfq_group *cfqg,
 						u64 start_time_ns,
 						u64 io_start_time_ns,
-						unsigned int op) { }
+			                        unsigned int op) { }
 
 #endif	/* CONFIG_CFQ_GROUP_IOSCHED */
 
