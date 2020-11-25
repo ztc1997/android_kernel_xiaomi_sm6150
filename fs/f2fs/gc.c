@@ -18,6 +18,7 @@
 #include <linux/pm_wakeup.h>
 #include <linux/msm_drm_notify.h>
 #include <linux/power_supply.h>
+#include <uapi/linux/sched/types.h>
 
 #include "f2fs.h"
 #include "node.h"
