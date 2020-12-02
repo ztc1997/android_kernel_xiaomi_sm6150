@@ -61,6 +61,10 @@ void *zpool_map_handle(struct zpool *pool, unsigned long handle,
 
 void zpool_unmap_handle(struct zpool *pool, unsigned long handle);
 
+unsigned long zpool_compact(struct zpool *pool);
+
+unsigned long zpool_get_num_compacted(struct zpool *pool);
+
 u64 zpool_get_total_size(struct zpool *pool);
 
 size_t zpool_huge_class_size(struct zpool *zpool);
@@ -108,6 +112,9 @@ struct zpool_driver {
 				enum zpool_mapmode mm);
 	void (*unmap)(void *pool, unsigned long handle);
 
+	unsigned long (*compact)(void *pool);
+	unsigned long (*get_num_compacted)(void *pool);
+
 	u64 (*total_size)(void *pool);
 	size_t (*huge_class_size)(void *pool);
 };
@@ -115,5 +122,7 @@ struct zpool_driver {
 void zpool_register_driver(struct zpool_driver *driver);
 
 int zpool_unregister_driver(struct zpool_driver *driver);
+
+bool zpool_evictable(struct zpool *pool);
 
 #endif
