@@ -558,6 +558,7 @@ int schedtune_task_boost(struct task_struct *p)
 {
 	struct schedtune *st;
 	int task_boost;
+	char name_buf[NAME_MAX + 1];
 
 	if (unlikely(!schedtune_initialized))
 		return 0;
@@ -565,7 +566,13 @@ int schedtune_task_boost(struct task_struct *p)
 	/* Get task boost value */
 	rcu_read_lock();
 	st = task_schedtune(p);
-	task_boost = st->boost;
+
+	cgroup_name(st->css.cgroup, name_buf, sizeof(name_buf));
+	if (strncmp(name_buf, "top-app", strlen("top-app"))) {
+		task_boost = st->boost || ((p->signal->oom_score_adj == 0) && !(p->flags & PF_KTHREAD));
+	} else
+		task_boost = st->boost;
+
 	rcu_read_unlock();
 
 	return task_boost;
@@ -578,13 +585,19 @@ int schedtune_task_boost_rcu_locked(struct task_struct *p)
 {
 	struct schedtune *st;
 	int task_boost;
+	char name_buf[NAME_MAX + 1];
 
 	if (unlikely(!schedtune_initialized))
 		return 0;
 
 	/* Get task boost value */
 	st = task_schedtune(p);
-	task_boost = st->boost;
+
+	cgroup_name(st->css.cgroup, name_buf, sizeof(name_buf));
+	if (strncmp(name_buf, "top-app", strlen("top-app"))) {
+		task_boost = st->boost || ((p->signal->oom_score_adj == 0) && !(p->flags & PF_KTHREAD));
+	} else
+		task_boost = st->boost;
 
 	return task_boost;
 }
