@@ -149,8 +149,8 @@ enum zone_stat_item {
 #endif
 	/* Second 128 byte cacheline */
 	NR_BOUNCE,
-#if IS_ENABLED(CONFIG_ZSMALLOC)
-	NR_ZSPAGES,		/* allocated in zsmalloc */
+#if IS_ENABLED(CONFIG_ZSMALLOC) || IS_ENABLED(CONFIG_Z3FOLD) || IS_ENABLED(CONFIG_ZBUD)
+	NR_ZSPAGES,		/* allocated by zsmalloc, z3fold, or zbud */
 #endif
 	NR_FREE_CMA_PAGES,
 	NR_VM_ZONE_STAT_ITEMS };

@@ -1050,7 +1050,7 @@ const char * const vmstat_text[] = {
 	"nr_shadow_call_stack_bytes",
 #endif
 	"nr_bounce",
-#if IS_ENABLED(CONFIG_ZSMALLOC)
+#if IS_ENABLED(CONFIG_ZSMALLOC) || IS_ENABLED(CONFIG_Z3FOLD) || IS_ENABLED(CONFIG_ZBUD)
 	"nr_zspages",
 #endif
 	"nr_free_cma",

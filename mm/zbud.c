@@ -249,6 +249,7 @@ static struct zbud_header *init_zbud_page(struct page *page)
 /* Resets the struct page fields and frees the page */
 static void free_zbud_page(struct zbud_header *zhdr)
 {
+	dec_zone_page_state(virt_to_page(zhdr), NR_ZSPAGES);
 	__free_page(virt_to_page(zhdr));
 }
 
@@ -376,6 +377,7 @@ int zbud_alloc(struct zbud_pool *pool, size_t size, gfp_t gfp,
 				bud = FIRST;
 			else
 				bud = LAST;
+			inc_zone_page_state(page, NR_ZSPAGES);
 			goto found;
 		}
 	}
@@ -385,6 +387,7 @@ int zbud_alloc(struct zbud_pool *pool, size_t size, gfp_t gfp,
 	page = alloc_page(gfp);
 	if (!page)
 		return -ENOMEM;
+	inc_zone_page_state(page, NR_ZSPAGES);
 	spin_lock(&pool->lock);
 	pool->pages_nr++;
 	zhdr = init_zbud_page(page);
