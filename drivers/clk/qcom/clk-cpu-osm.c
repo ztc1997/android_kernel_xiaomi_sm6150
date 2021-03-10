@@ -787,7 +787,7 @@ static int add_opp(struct clk_osm *c, struct device **device_list, int count)
 
 	while (1) {
 		rate = c->hw.init->rate_max[j++];
-		uv = find_voltage(c, rate) - 80000;
+		uv = find_voltage(c, rate);
 		if (uv <= 0) {
 			pr_warn("No voltage for %lu.\n", rate);
 			return -EINVAL;
