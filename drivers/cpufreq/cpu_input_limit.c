@@ -278,7 +278,8 @@ static int __init cpu_input_limit_init(void)
 		goto unregister_handler;
 	}
 
-	thread = kthread_run(cpu_limit_thread, b, "cpu_limitd");
+	thread = kthread_run_perf_critical(cpu_lp_mask, cpu_limit_thread, 
+			b, "cpu_limitd");
 	if (IS_ERR(thread)) {
 		ret = PTR_ERR(thread);
 		pr_err("Failed to start CPU limit thread, err: %d\n", ret);
