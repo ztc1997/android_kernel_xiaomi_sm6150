@@ -93,13 +93,8 @@ static void input_unlimit_worker(struct work_struct *work)
 
 static int cpu_limit_thread(void *data)
 {
-	static const struct sched_param sched_max_rt_prio = {
-		.sched_priority = MAX_RT_PRIO - 1
-	};
 	struct limit_drv *b = data;
 	unsigned long old_state = 0;
-
-	sched_setscheduler_nocheck(current, SCHED_FIFO, &sched_max_rt_prio);
 
 	while (1) {
 		bool should_stop = false;
