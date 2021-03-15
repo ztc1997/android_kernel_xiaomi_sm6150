@@ -717,7 +717,6 @@ endif
 ifeq ($(cc-name),clang)
 KBUILD_CFLAGS	+= $(call cc-option, -mcpu=cortex-a55 -mtune=cortex-a55)
 KBUILD_CFLAGS	+= $(call cc-option, -mllvm -polly) \
-		   $(call cc-option, -mllvm -polly-run-dce) \
 		   $(call cc-option, -mllvm -polly-run-inliner) \
 		   $(call cc-option, -mllvm -polly-opt-fusion=max) \
 		   $(call cc-option, -mllvm -polly-ast-use-context) \
