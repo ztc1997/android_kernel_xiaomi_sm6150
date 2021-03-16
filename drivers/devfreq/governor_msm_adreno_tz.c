@@ -61,7 +61,7 @@ static DEFINE_SPINLOCK(suspend_lock);
 
 static u64 suspend_time;
 static u64 suspend_start;
-static int fix_freq_high_refresh_rate = 1;
+static int fix_freq_high_refresh_rate = 0;
 static unsigned long acc_total, acc_relative_busy;
 
 /*
