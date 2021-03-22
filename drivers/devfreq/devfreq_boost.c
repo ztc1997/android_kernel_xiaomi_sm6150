@@ -8,6 +8,7 @@
 #include <linux/devfreq_boost.h>
 #include <linux/input.h>
 #include <linux/kthread.h>
+#include <linux/cpuset.h>
 #include <linux/msm_drm_notify.h>
 #include <linux/slab.h>
 #include <uapi/linux/sched/types.h>
@@ -61,6 +62,9 @@ static void __devfreq_boost_kick(struct boost_dev *b)
 		return;
 
 	set_bit(INPUT_BOOST, &b->state);
+
+	do_busy_bg_cpuset();
+
 	if (!mod_delayed_work(system_unbound_wq, &b->input_unboost,
 		msecs_to_jiffies(CONFIG_DEVFREQ_INPUT_BOOST_DURATION_MS))) {
 		/* Set the bit again in case we raced with the unboost worker */
@@ -108,6 +112,8 @@ void devfreq_boost_kick_max(enum df_device device, unsigned int duration_ms)
 {
 	struct df_boost_drv *d = &df_boost_drv_g;
 
+	do_busy_bg_cpuset();
+
 	__devfreq_boost_kick_max(&d->devices[device], duration_ms);
 }
 
@@ -128,6 +134,8 @@ static void devfreq_input_unboost(struct work_struct *work)
 
 	clear_bit(INPUT_BOOST, &b->state);
 	wake_up(&b->boost_waitq);
+
+	do_idle_bg_cpuset();
 }
 
 static void devfreq_max_unboost(struct work_struct *work)
@@ -137,6 +145,8 @@ static void devfreq_max_unboost(struct work_struct *work)
 
 	clear_bit(MAX_BOOST, &b->state);
 	wake_up(&b->boost_waitq);
+
+	do_idle_bg_cpuset();
 }
 
 static void devfreq_update_boosts(struct boost_dev *b, unsigned long state)
@@ -259,6 +269,8 @@ free_handle:
 
 static void devfreq_boost_input_disconnect(struct input_handle *handle)
 {
+	do_idle_bg_cpuset();
+
 	input_close_device(handle);
 	input_unregister_handle(handle);
 	kfree(handle);
