@@ -25,8 +25,8 @@
 #define DEFAULT_HISPEED_LOAD_LP 90
 #define DEFAULT_HISPEED_LOAD_PERF 90
 
-#define DEFAULT_HISPEED_FREQ_LP 0
-#define DEFAULT_HISPEED_FREQ_PERF 0
+#define DEFAULT_HISPEED_FREQ_LP 1708800
+#define DEFAULT_HISPEED_FREQ_PERF 1324800
 
 #define DEFAULT_PL_LP 1
 #define DEFAULT_PL_PERF 1
@@ -916,6 +916,10 @@ static ssize_t hispeed_load_store(struct gov_attr_set *attr_set,
 {
 	struct sugov_tunables *tunables = to_sugov_tunables(attr_set);
 
+	/* Apply init protection, else values will get overwritten */
+	if (task_is_booster(current))
+		return count;
+
 	if (kstrtouint(buf, 10, &tunables->hispeed_load))
 		return -EINVAL;
 
@@ -939,6 +943,10 @@ static ssize_t hispeed_freq_store(struct gov_attr_set *attr_set,
 	struct sugov_policy *sg_policy;
 	unsigned long hs_util;
 	unsigned long flags;
+
+	/* Apply init protection, else values will get overwritten */
+	if (task_is_booster(current))
+		return count;
 
 	if (kstrtouint(buf, 10, &val))
 		return -EINVAL;
