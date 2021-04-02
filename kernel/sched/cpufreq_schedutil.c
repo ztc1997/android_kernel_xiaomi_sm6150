@@ -22,6 +22,16 @@
 
 #define SUGOV_KTHREAD_PRIORITY	50
 
+#define DEFAULT_HISPEED_LOAD_LP 90
+#define DEFAULT_HISPEED_LOAD_PERF 90
+
+#define DEFAULT_HISPEED_FREQ_LP 0
+#define DEFAULT_HISPEED_FREQ_PERF 0
+
+#define DEFAULT_PL_LP 1
+#define DEFAULT_PL_PERF 1
+
+
 static unsigned int default_efficient_freq_lp[] = {1708800};
 static u64 default_up_delay_lp[] = {2000 * NSEC_PER_MSEC};
 
@@ -1189,6 +1199,9 @@ static int sugov_init(struct cpufreq_policy *policy)
     	tunables->nefficient_freq = ARRAY_SIZE(default_efficient_freq_perf);
 		tunables->up_delay = default_up_delay_perf;
 		tunables->nup_delay = ARRAY_SIZE(default_up_delay_perf);
+		tunables->hispeed_load = DEFAULT_HISPEED_LOAD_PERF;
+		tunables->hispeed_freq = DEFAULT_HISPEED_FREQ_PERF;
+		tunables->pl = DEFAULT_PL_PERF;
 	}
 
 	if (cpumask_test_cpu(policy->cpu, cpu_lp_mask)) {
@@ -1201,6 +1214,9 @@ static int sugov_init(struct cpufreq_policy *policy)
     	tunables->nefficient_freq = ARRAY_SIZE(default_efficient_freq_lp);
 		tunables->up_delay = default_up_delay_lp;
 		tunables->nup_delay = ARRAY_SIZE(default_up_delay_lp);
+		tunables->hispeed_load = DEFAULT_HISPEED_LOAD_LP;
+		tunables->hispeed_freq = DEFAULT_HISPEED_FREQ_LP;
+		tunables->pl = DEFAULT_PL_LP;
 	}
 
 	policy->governor_data = sg_policy;
