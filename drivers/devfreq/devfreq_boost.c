@@ -14,6 +14,7 @@
 #include <uapi/linux/sched/types.h>
 
 unsigned long last_input_time;
+bool is_devfreq_boost_max __read_mostly;
 
 enum {
 	SCREEN_OFF,
@@ -116,6 +117,8 @@ void devfreq_boost_kick_max(enum df_device device, unsigned int duration_ms)
 
 	do_busy_bg_cpuset();
 
+	is_devfreq_boost_max = true;
+
 	__devfreq_boost_kick_max(&d->devices[device], duration_ms);
 }
 
@@ -148,6 +151,7 @@ static void devfreq_max_unboost(struct work_struct *work)
 	clear_bit(MAX_BOOST, &b->state);
 	wake_up(&b->boost_waitq);
 
+	is_devfreq_boost_max = false;
 	do_idle_bg_cpuset();
 }
 
