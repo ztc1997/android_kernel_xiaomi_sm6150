@@ -31,11 +31,11 @@
 #define DEFAULT_PL_LP 1
 #define DEFAULT_PL_PERF 1
 
-#define DEFAULT_DOWN_TOLERANCE_LP (20 * NSEC_PER_MSEC)
+#define DEFAULT_DOWN_TOLERANCE_LP (0 * NSEC_PER_MSEC)
 #define DEFAULT_DOWN_TOLERANCE_PERF (20 * NSEC_PER_MSEC)
 
-static unsigned int default_efficient_freq_lp[] = {1708800};
-static u64 default_up_delay_lp[] = {2000 * NSEC_PER_MSEC};
+static unsigned int default_efficient_freq_lp[] = {};
+static u64 default_up_delay_lp[] = {};
 
 static unsigned int default_efficient_freq_perf[] = {1708800};
 static u64 default_up_delay_perf[] = {1000 * NSEC_PER_MSEC};
