@@ -376,7 +376,6 @@
 			busy-cost-data = <
 				  576000   75
 				 1708800  148
-				 1804800  166
 			>;
 			idle-cost-data = <
 				16 12 8 6
@@ -401,7 +400,6 @@
 			busy-cost-data = <
 				 576000    5
 				 1708800   14
-				 1804800   14
 			>;
 			idle-cost-data = <
 				5 4 3 2 1
@@ -932,8 +930,7 @@
 		
 		qcom,cpufreq-table-0 =
 			<576000>,
-			<1708800>,
-			<1804800>;
+			<1708800>;
 
 		qcom,cpufreq-table-6 =
 			<806400>,
@@ -3316,7 +3313,7 @@
 
 		zone@0 {
 			reg = <0>;
-			qcom,silver-khz = <1804800>;
+			qcom,silver-khz = <1708800>;
 			qcom,gold-khz = <2208000>;
 			qcom,trip-deg = <65000>;
 		};
