@@ -132,7 +132,8 @@ extern bool is_devfreq_boost_max __read_mostly;
 
 static void do_freq_limit(struct sugov_policy *sg_policy, unsigned int *freq, u64 time)
 {
-	if (!sg_policy->tunables->nefficient_freq || !sg_policy->tunables->nup_delay)
+	if (!sg_policy->tunables->nefficient_freq
+		|| sg_policy->tunables->nefficient_freq != sg_policy->tunables->nup_delay)
 		return;
 
 	if (is_devfreq_boost_max) {
