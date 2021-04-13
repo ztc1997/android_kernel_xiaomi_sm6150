@@ -246,6 +246,48 @@ void refcount_dec(refcount_t *r)
 			   "refcount_t: decrement hit 0; leaking memory.\n");
 }
 EXPORT_SYMBOL(refcount_dec);
+#else
+bool refcount_add_not_zero(unsigned int i, refcount_t *r)
+{
+	return atomic_add_unless(&r->refs, i, 0);
+}
+EXPORT_SYMBOL(refcount_add_not_zero);
+
+void refcount_add(unsigned int i, refcount_t *r)
+{
+	atomic_add(i, &r->refs);
+}
+EXPORT_SYMBOL(refcount_add);
+
+bool refcount_inc_not_zero(refcount_t *r)
+{
+	return atomic_add_unless(&r->refs, 1, 0);
+}
+EXPORT_SYMBOL(refcount_inc_not_zero);
+
+void refcount_inc(refcount_t *r)
+{
+	atomic_inc(&r->refs);
+}
+EXPORT_SYMBOL(refcount_inc);
+
+bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+{
+	return atomic_sub_and_test(i, &r->refs);
+}
+EXPORT_SYMBOL(refcount_sub_and_test);
+
+bool refcount_dec_and_test(refcount_t *r)
+{
+	return atomic_dec_and_test(&r->refs);
+}
+EXPORT_SYMBOL(refcount_dec_and_test);
+
+void refcount_dec(refcount_t *r)
+{
+	atomic_dec(&r->refs);
+}
+EXPORT_SYMBOL(refcount_dec);
 #endif /* CONFIG_REFCOUNT_FULL */
 
 /**
