@@ -13,11 +13,15 @@
 #include <linux/msm_drm_notify.h>
 #include <linux/slab.h>
 #include <uapi/linux/sched/types.h>
+#include <linux/sched.h>
 
 #ifdef CONFIG_DYNAMIC_STUNE_BOOST
 static unsigned short dynamic_stune_boost __read_mostly = 1;
 module_param(dynamic_stune_boost, short, 0644);
 #endif
+
+static bool dynamic_sched_boost __read_mostly = true;
+module_param(dynamic_sched_boost, bool, 0644);
 
 unsigned long last_input_time;
 bool is_devfreq_boost_max __read_mostly;
@@ -73,9 +77,13 @@ static void __devfreq_boost_kick(struct boost_dev *b)
 	set_bit(INPUT_BOOST, &b->state);
 
 	do_busy_bg_cpuset();
+
 	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	do_stune_boost("top-app", dynamic_stune_boost);
 	#endif
+
+	if (dynamic_sched_boost)
+		sched_set_boost(2);
 
 	if (!mod_delayed_work(system_unbound_wq, &b->input_unboost,
 		msecs_to_jiffies(CONFIG_DEVFREQ_INPUT_BOOST_DURATION_MS))) {
@@ -120,6 +128,9 @@ static void __devfreq_boost_kick_max(struct boost_dev *b,
 	#endif
 
 	do_busy_bg_cpuset();
+	
+	if (dynamic_sched_boost)
+		sched_set_boost(2);
 
 	if (!mod_delayed_work(system_unbound_wq, &b->max_unboost,
 			      boost_jiffies)) {
@@ -159,6 +170,9 @@ static void devfreq_input_unboost(struct work_struct *work)
 	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	reset_stune_boost("top-app");
 	#endif
+
+	if (dynamic_sched_boost)
+		sched_set_boost(0);
 }
 
 static void devfreq_max_unboost(struct work_struct *work)
@@ -175,6 +189,9 @@ static void devfreq_max_unboost(struct work_struct *work)
 	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	reset_stune_boost("top-app");
 	#endif
+
+	if (dynamic_sched_boost)
+		sched_set_boost(0);
 }
 
 static void devfreq_update_boosts(struct boost_dev *b, unsigned long state)
@@ -304,6 +321,9 @@ static void devfreq_boost_input_disconnect(struct input_handle *handle)
 	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	reset_stune_boost("top-app");
 	#endif
+
+	if (dynamic_sched_boost)
+		sched_set_boost(0);
 
 	input_close_device(handle);
 	input_unregister_handle(handle);
