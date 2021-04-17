@@ -103,6 +103,11 @@ static void __devfreq_boost_kick_max(struct boost_dev *b,
 				     new_expires) != curr_expires);
 
 	set_bit(MAX_BOOST, &b->state);
+
+	is_devfreq_boost_max = true;
+
+	do_busy_bg_cpuset();
+
 	if (!mod_delayed_work(system_unbound_wq, &b->max_unboost,
 			      boost_jiffies)) {
 		/* Set the bit again in case we raced with the unboost worker */
@@ -114,10 +119,6 @@ static void __devfreq_boost_kick_max(struct boost_dev *b,
 void devfreq_boost_kick_max(enum df_device device, unsigned int duration_ms)
 {
 	struct df_boost_drv *d = &df_boost_drv_g;
-
-	do_busy_bg_cpuset();
-
-	is_devfreq_boost_max = true;
 
 	__devfreq_boost_kick_max(&d->devices[device], duration_ms);
 }
