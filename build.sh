@@ -1,5 +1,5 @@
 ANYKERNEL3_DIR=$PWD/AnyKernel3
-FINAL_KERNEL_ZIP=kernel-phoenix-r-ztc1997-$(cat version)-$(git rev-parse --short=7 HEAD).zip
+FINAL_KERNEL_ZIP=kernel-phoenix-r-ztc1997-$(git rev-parse --short=7 HEAD).zip
 IMAGE_GZ=$PWD/out/arch/arm64/boot/Image.gz
 DTB=$PWD/out/arch/arm64/boot/dts/qcom/sdmmagpie.dtb
 DTBO_IMG=$PWD/out/arch/arm64/boot/dtbo.img
