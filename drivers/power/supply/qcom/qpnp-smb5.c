@@ -1636,7 +1636,9 @@ static int smb5_usb_main_get_prop(struct power_supply *psy,
 		val->intval = chg->flash_active;
 		break;
 	case POWER_SUPPLY_PROP_FLASH_TRIGGER:
-		rc = schgm_flash_get_vreg_ok(chg, &val->intval);
+		val->intval = 0;
+		if (chg->chg_param.smb_version == PMI632_SUBTYPE)
+			rc = schgm_flash_get_vreg_ok(chg, &val->intval);
 		break;
 	case POWER_SUPPLY_PROP_TOGGLE_STAT:
 		val->intval = 0;
@@ -3174,8 +3176,9 @@ static int smb5_init_hw(struct smb5 *chip)
 	 */
 	if (chg->chg_param.smb_version == PMI632_SUBTYPE) {
 		schgm_flash_init(chg);
-		smblib_rerun_apsd_if_required(chg);
 	}
+
+	smblib_rerun_apsd_if_required(chg);
 
 	/* Use ICL results from HW */
 	rc = smblib_icl_override(chg, HW_AUTO_MODE);
