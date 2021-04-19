@@ -738,6 +738,12 @@ KBUILD_CFLAGS	+= $(call cc-option, -mllvm -polly) \
 		   $(call cc-option, -mllvm -polly-detect-keep-going) \
 		   $(call cc-option, -mllvm -polly-vectorizer=stripmine) \
 		   $(call cc-option, -mllvm -polly-invariant-load-hoisting)
+
+KBUILD_CFLAGS	+= -mllvm -inline-threshold=1000
+KBUILD_CFLAGS	+= -mllvm -inlinehint-threshold=750
+KBUILD_CFLAGS	+= --param large-stack-frame=12288
+KBUILD_CFLAGS	+= --param inline-min-speedup=5
+KBUILD_CFLAGS	+= --param inline-unit-growth=60
 endif
 endif
 
