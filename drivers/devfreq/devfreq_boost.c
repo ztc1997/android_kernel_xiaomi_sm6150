@@ -9,7 +9,6 @@
 #include <linux/input.h>
 #include <linux/kthread.h>
 #include <linux/moduleparam.h>
-#include <linux/cpuset.h>
 #include <linux/msm_drm_notify.h>
 #include <linux/slab.h>
 #include <uapi/linux/sched/types.h>
@@ -76,8 +75,6 @@ static void __devfreq_boost_kick(struct boost_dev *b)
 
 	set_bit(INPUT_BOOST, &b->state);
 
-	do_busy_bg_cpuset();
-
 	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	do_stune_boost("top-app", dynamic_stune_boost);
 	#endif
@@ -126,8 +123,6 @@ static void __devfreq_boost_kick_max(struct boost_dev *b,
 	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	do_stune_boost("top-app", dynamic_stune_boost);
 	#endif
-
-	do_busy_bg_cpuset();
 	
 	if (dynamic_sched_boost)
 		sched_set_boost(2);
@@ -165,8 +160,6 @@ static void devfreq_input_unboost(struct work_struct *work)
 	clear_bit(INPUT_BOOST, &b->state);
 	wake_up(&b->boost_waitq);
 
-	do_idle_bg_cpuset();
-
 	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	reset_stune_boost("top-app");
 	#endif
@@ -184,7 +177,6 @@ static void devfreq_max_unboost(struct work_struct *work)
 	wake_up(&b->boost_waitq);
 
 	is_devfreq_boost_max = false;
-	do_idle_bg_cpuset();
 
 	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	reset_stune_boost("top-app");
@@ -316,8 +308,6 @@ free_handle:
 
 static void devfreq_boost_input_disconnect(struct input_handle *handle)
 {
-	do_idle_bg_cpuset();
-	
 	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	reset_stune_boost("top-app");
 	#endif
