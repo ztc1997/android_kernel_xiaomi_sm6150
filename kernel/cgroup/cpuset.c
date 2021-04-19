@@ -138,10 +138,6 @@ struct cpuset {
 	int relax_domain_level;
 };
 
-static struct cpuset *background_cpuset;
-static bool is_busy;
-static struct work_struct bg_work;
-
 #ifdef CONFIG_CPUSET_ASSIST
 struct cs_target {
 	const char *name;
@@ -2063,7 +2059,6 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
 	struct cpuset *parent = parent_cs(cs);
 	struct cpuset *tmp_cs;
 	struct cgroup_subsys_state *pos_css;
-	char name_buf[NAME_MAX + 1];
 
 	if (!parent)
 		return 0;
@@ -2118,12 +2113,6 @@ static int cpuset_css_online(struct cgroup_subsys_state *css)
 	cpumask_copy(cs->effective_cpus, parent->cpus_allowed);
 	spin_unlock_irq(&callback_lock);
 out_unlock:
-
-	cgroup_name(css->cgroup, name_buf, sizeof(name_buf));
-
-	if (!strncmp(name_buf, "background", 10))
-		background_cpuset = cs;
-	
 	mutex_unlock(&cpuset_mutex);
 	return 0;
 }
@@ -2206,8 +2195,6 @@ struct cgroup_subsys cpuset_cgrp_subsys = {
 	.early_init	= true,
 };
 
-static void bg_worker(struct work_struct *work);
-
 /**
  * cpuset_init - initialize cpusets at system boot
  *
@@ -2237,8 +2224,6 @@ int __init cpuset_init(void)
 		return err;
 
 	BUG_ON(!alloc_cpumask_var(&cpus_attach, GFP_KERNEL));
-
-	INIT_WORK(&bg_work, bg_worker);
 
 	return 0;
 }
@@ -2870,53 +2855,4 @@ void cpuset_task_status_allowed(struct seq_file *m, struct task_struct *task)
 		   nodemask_pr_args(&task->mems_allowed));
 	seq_printf(m, "Mems_allowed_list:\t%*pbl\n",
 		   nodemask_pr_args(&task->mems_allowed));
-}
-
-static void bg_worker(struct work_struct *work)
-{
-	struct cpuset *cs = background_cpuset;
-	struct cpuset *trialcs;
-	int retval = -ENODEV;
-
-	css_get(&cs->css);
-	flush_work(&cpuset_hotplug_work);
-
-	mutex_lock(&cpuset_mutex);
-	if (!is_cpuset_online(cs))
-		goto out_unlock;
-
-	trialcs = alloc_trial_cpuset(cs);
-	if (!trialcs) {
-		retval = -ENOMEM;
-		goto out_unlock;
-	}
-
-	if(is_busy)
-		retval = update_cpumask(cs, trialcs, "0-1");
-	else
-		retval = update_cpumask(cs, trialcs, "0-5");
-
-	free_trial_cpuset(trialcs);
-out_unlock:
-	mutex_unlock(&cpuset_mutex);
-	css_put(&cs->css);
-	flush_workqueue(cpuset_migrate_mm_wq);
-}
-
-void do_idle_bg_cpuset(void)
-{
-	if(!is_busy)
-		return;
-	is_busy=false;
-
-	schedule_work(&bg_work);
-}
-
-void do_busy_bg_cpuset(void)
-{
-	if(is_busy)
-		return;
-	is_busy=true;
-
-	schedule_work(&bg_work);
 }
