@@ -770,7 +770,9 @@ static struct cftype files[] = {
 	{ }	/* terminate */
 };
 
+#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 static void dsb_worker(struct work_struct *work);
+#endif
 
 static int
 schedtune_boostgroup_init(struct schedtune *st)
@@ -789,7 +791,9 @@ schedtune_boostgroup_init(struct schedtune *st)
 		bg->group[st->idx].ts = 0;
 	}
 
+	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	INIT_WORK(&st->dsb_work, dsb_worker);
+	#endif
 
 	return 0;
 }
