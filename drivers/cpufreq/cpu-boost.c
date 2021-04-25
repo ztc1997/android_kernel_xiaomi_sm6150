@@ -231,7 +231,6 @@ static void do_input_boost_rem(struct work_struct *work)
 	}
 
 	if (sched_prefer_idle_active) {
-		sched_set_prefer_idle(false);
 		sched_prefer_idle_active = false;
 	}
 }
@@ -247,7 +246,6 @@ static void do_input_boost(struct work_struct *work)
 		sched_boost_active = false;
 	}
 	if (sched_prefer_idle_active) {
-		sched_set_prefer_idle(false);
 		sched_prefer_idle_active = false;
 	}
 
@@ -270,7 +268,6 @@ static void do_input_boost(struct work_struct *work)
 			sched_boost_active = true;
 	}
 	if (sched_prefer_idle) {
-		sched_set_prefer_idle(true);
 		sched_prefer_idle_active = true;
 	}
 
