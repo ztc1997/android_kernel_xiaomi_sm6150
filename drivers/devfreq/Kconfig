@@ -301,6 +301,14 @@ config DEVFREQ_MSM_LLCCBW_BOOST_FREQ
 	help
 	  LLCCBW boost frequency for the MSM DDR bus.
 
+
+config INPUT_STUNE_BOOST
+	depends on DYNAMIC_STUNE_BOOST
+	int "Input SchedTune boost level"
+	default "10"
+	help
+	  Default SchedTune boost level for the top-app cgroup.
+
 endif
 
 source "drivers/devfreq/event/Kconfig"

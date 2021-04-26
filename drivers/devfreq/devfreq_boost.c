@@ -14,7 +14,7 @@
 #include <uapi/linux/sched/types.h>
 
 #ifdef CONFIG_DYNAMIC_STUNE_BOOST
-static unsigned short dynamic_stune_boost __read_mostly = 1;
+static unsigned short dynamic_stune_boost __read_mostly = CONFIG_INPUT_STUNE_BOOST;
 module_param(dynamic_stune_boost, short, 0644);
 #endif
 
