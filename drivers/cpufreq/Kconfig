@@ -260,6 +260,13 @@ config SCHEDUTIL_DOWN_RATE_LIMIT_LITTLE
 	  This sets schedutil's default frequency down rate-limit for little cluster in
 	  microseconds.
 
+config SCHEDUTIL_FREQUENCY_LIMIT
+	bool "Wait for up_delay before using non-efficient frequencies"
+	help
+	  Only raise cpufreq to the non-efficient one (higher than effcient frequencies)
+	  if the governor keeps requiring non-efficient frequencies for more than up_delay
+	  time.
+
 endif
 
 config CPU_FREQ_GOV_INTERACTIVE

@@ -19,7 +19,10 @@ module_param(dynamic_stune_boost, short, 0644);
 #endif
 
 unsigned long last_input_time;
+
+#ifdef CONFIG_SCHEDUTIL_FREQUENCY_LIMIT
 bool is_devfreq_boost_max __read_mostly;
+#endif
 
 enum {
 	SCREEN_OFF,
@@ -111,7 +114,9 @@ static void __devfreq_boost_kick_max(struct boost_dev *b,
 
 	set_bit(MAX_BOOST, &b->state);
 
+#ifdef CONFIG_SCHEDUTIL_FREQUENCY_LIMIT
 	is_devfreq_boost_max = true;
+#endif
 
 	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	do_stune_boost("top-app", dynamic_stune_boost);
@@ -163,7 +168,9 @@ static void devfreq_max_unboost(struct work_struct *work)
 	clear_bit(MAX_BOOST, &b->state);
 	wake_up(&b->boost_waitq);
 
+#ifdef CONFIG_SCHEDUTIL_FREQUENCY_LIMIT
 	is_devfreq_boost_max = false;
+#endif
 
 	#ifdef CONFIG_DYNAMIC_STUNE_BOOST
 	reset_stune_boost("top-app");
