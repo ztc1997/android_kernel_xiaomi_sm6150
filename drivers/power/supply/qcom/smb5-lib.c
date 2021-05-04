@@ -22,13 +22,16 @@
 #include <linux/pmic-voter.h>
 #include <linux/of_batterydata.h>
 #include <linux/ktime.h>
-#include <linux/module.h>
 #include "smb5-lib.h"
 #include "smb5-reg.h"
 #include "schgm-flash.h"
 #include "step-chg-jeita.h"
 #include "storm-watch.h"
 #include "schgm-flash.h"
+
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/fastchg.h>
+#endif
 
 #define smblib_err(chg, fmt, ...)		\
 	printk_deferred(KERN_ERR"%s: %s: " fmt, chg->name,	\
@@ -48,9 +51,6 @@
 	((typec_mode == POWER_SUPPLY_TYPEC_SOURCE_MEDIUM	\
 	|| typec_mode == POWER_SUPPLY_TYPEC_SOURCE_HIGH)	\
 	&& (!chg->typec_legacy || chg->typec_legacy_use_rp_icl))
-
-bool skip_thermal = false;
-module_param(skip_thermal, bool, 0644);
 
 static void update_sw_icl_max(struct smb_charger *chg, int pst);
 static int smblib_get_prop_typec_mode(struct smb_charger *chg);
@@ -3016,16 +3016,20 @@ static int smblib_therm_charging(struct smb_charger *chg)
 {
 	int thermal_icl_ua = 0;
 	int thermal_fcc_ua = 0;
+#ifdef CONFIG_FORCE_FAST_CHARGE
 	int temp_level;
+#endif
 	int rc;
 
 	if (chg->system_temp_level >= MAX_TEMP_LEVEL)
 		return 0;
 
-	if (skip_thermal) {
+#ifdef CONFIG_FORCE_FAST_CHARGE
+	if (force_fast_charge > 0) {
 		temp_level = chg->system_temp_level;
 		chg->system_temp_level = 0;
 	}
+#endif
 
 	switch (chg->real_charger_type) {
 	case POWER_SUPPLY_TYPE_USB_HVDCP:
@@ -3152,9 +3156,11 @@ static int smblib_therm_charging(struct smb_charger *chg)
 		}
 	}
 
-	if (skip_thermal) {
+#ifdef CONFIG_FORCE_FAST_CHARGE
+	if (force_fast_charge > 0) {
 		chg->system_temp_level = temp_level;
 	}
+#endif
 
 	return rc;
 }
