@@ -255,8 +255,8 @@ int ion_heap_init_deferred_free(struct ion_heap *heap)
 #endif
 	INIT_LIST_HEAD(&heap->free_list);
 	init_waitqueue_head(&heap->waitqueue);
-	heap->task = kthread_run(ion_heap_deferred_free, heap,
-				 "%s", heap->name);
+	heap->task = kthread_run_perf_critical(cpu_lp_mask, 
+				 ion_heap_deferred_free, heap, "%s", heap->name);
 	if (IS_ERR(heap->task)) {
 		pr_err("%s: creating thread for deferred free failed\n",
 		       __func__);
