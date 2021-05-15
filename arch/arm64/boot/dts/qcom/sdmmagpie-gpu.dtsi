@@ -68,6 +68,7 @@
 
 		/* <HZ/12> */
 		qcom,idle-timeout = <58>;
+		qcom,no-nap;
 
 		qcom,highest-bank-bit = <14>;
 
@@ -605,7 +606,6 @@
 		clock-names = "iface_clk", "mem_clk", "mem_iface_clk";
 
 		qcom,secure_align_mask = <0xfff>;
-		qcom,unmap_fast;
 		qcom,retention;
 		qcom,hyp_secure_alloc;
 
