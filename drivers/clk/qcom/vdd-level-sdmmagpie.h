@@ -19,7 +19,6 @@
 
 enum vdd_levels {
 	VDD_NONE,
-	VDD_RETENTION,		/* RETENTION */
 	VDD_MIN,		/* MIN SVS */
 	VDD_LOWER,		/* SVS2 */
 	VDD_LOW,		/* SVS */
@@ -31,7 +30,6 @@ enum vdd_levels {
 
 static int vdd_corner[] = {
 	RPMH_REGULATOR_LEVEL_OFF,		/* VDD_NONE */
-	RPMH_REGULATOR_LEVEL_RETENTION,		/* VDD_RETENTION */
 	RPMH_REGULATOR_LEVEL_MIN_SVS,		/* VDD_MIN */
 	RPMH_REGULATOR_LEVEL_LOW_SVS,		/* VDD_LOWER */
 	RPMH_REGULATOR_LEVEL_SVS,		/* VDD_LOW */
