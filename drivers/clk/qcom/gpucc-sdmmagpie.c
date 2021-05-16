@@ -39,7 +39,6 @@
 
 enum vdd_gx_levels {
 	VDD_GX_NONE,
-	VDD_GX_RETENTION,	/* RETENTION */
 	VDD_GX_MIN,		/* MIN SVS */
 	VDD_GX_LOWER,		/* SVS2 */
 	VDD_GX_LOW,		/* SVS */
@@ -53,7 +52,6 @@ enum vdd_gx_levels {
 
 static int vdd_gx_corner[] = {
 	RPMH_REGULATOR_LEVEL_OFF,		/* VDD_GX_NONE */
-	RPMH_REGULATOR_LEVEL_RETENTION,		/* VDD_GX_RETENTION */
 	RPMH_REGULATOR_LEVEL_MIN_SVS,		/* VDD_GX_MIN */
 	RPMH_REGULATOR_LEVEL_LOW_SVS,		/* VDD_GX_LOWER */
 	RPMH_REGULATOR_LEVEL_SVS,		/* VDD_GX_LOW */
@@ -274,7 +272,6 @@ static struct clk_rcg2 gpu_cc_gmu_clk_src = {
 		.vdd_class = &vdd_cx,
 		.num_rate_max = VDD_NUM,
 		.rate_max = (unsigned long[VDD_NUM]) {
-			[VDD_RETENTION] = 19200000,
 			[VDD_MIN] = 200000000},
 	},
 };
@@ -311,14 +308,14 @@ static struct clk_rcg2 gpu_cc_gx_gfx3d_clk_src = {
 		.vdd_class = &vdd_gx,
 		.num_rate_max = VDD_GX_NUM,
 		.rate_max = (unsigned long[VDD_GX_NUM]) {
-			[VDD_GX_RETENTION] = 180000000,
-			[VDD_GX_MIN] = 267000000,
-			[VDD_GX_LOWER] = 355000000,
-			[VDD_GX_LOW] = 430000000,
-			[VDD_GX_LOW_L1] = 565000000,
-			[VDD_GX_NOMINAL] = 700000000,
-			[VDD_GX_NOMINAL_L1] = 800000000,
-			[VDD_GX_HIGH] = 825000000},
+			[VDD_GX_MIN] = 180000000,
+			[VDD_GX_LOWER] = 267000000,
+			[VDD_GX_LOW] = 355000000,
+			[VDD_GX_LOW_L1] = 430000000,
+			[VDD_GX_NOMINAL] = 565000000,
+			[VDD_GX_NOMINAL_L1] = 650000000,
+			[VDD_GX_HIGH] = 800000000,
+			[VDD_GX_HIGH_L1] = 825000000},
 	},
 };
 
