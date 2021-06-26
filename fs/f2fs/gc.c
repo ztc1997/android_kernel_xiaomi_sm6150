@@ -62,6 +62,8 @@ static int gc_thread_func(void *data)
 
 	set_freezable();
 	do {
+		bool sync_mode;
+
 		wait_event_interruptible_timeout(*wq,
 				kthread_should_stop() || freezing(current) ||
 				gc_th->gc_wake,
